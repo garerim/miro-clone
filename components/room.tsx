@@ -19,7 +19,6 @@ interface RoomProps {
 export function Room({ children, roomId, fallback }: RoomProps) {
   return (
     <LiveblocksProvider authEndpoint={"/api/liveblocks-auth"} throttle={16} >
-      {/* publicApiKey={"pk_dev_tD5TavX7rg9Lm7K7zfPbFhqfw97hwzER8kRvXG2PK8Fr5TvHqNKp8cuoV4EUSsrx"} */}
       <RoomProvider
         id={roomId}
         initialPresence={{
