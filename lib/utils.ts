@@ -1,8 +1,8 @@
-import { Camera, Color, Point, Side, XYWH } from "@/types/canvas"
+import { Camera, Color, Layer, Point, Side, XYWH } from "@/types/canvas"
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 
-const COLORS = [ 
+const COLORS = [
   "#DC2626",
   "#D97706",
   "#059669",
@@ -18,7 +18,7 @@ export function connectionIdColor(connectionId: number) {
   return COLORS[connectionId % COLORS.length]
 }
 
-export function pointerEventToCanvasPoint (
+export function pointerEventToCanvasPoint(
   e: React.PointerEvent,
   camera: Camera
 ) {
@@ -28,7 +28,7 @@ export function pointerEventToCanvasPoint (
   }
 }
 
-export function colorToCss(color: Color){
+export function colorToCss(color: Color) {
   return `#${color.r.toString(16).padStart(2, "0")}${color.g.toString(16).padStart(2, "0")}${color.b.toString(16).padStart(2, "0")}`
 }
 
@@ -65,4 +65,41 @@ export function resizeBounds(
   }
 
   return result;
+}
+
+export function findIntersectingLayersWithRectangle(
+  layersIds: readonly string[],
+  layers: ReadonlyMap<string, Layer>,
+  a: Point,
+  b: Point,
+) {
+  const rect = {
+    x: Math.min(a.x, b.x),
+    y: Math.min(a.y, b.y),
+    width: Math.abs(a.x - b.x),
+    height: Math.abs(a.y - b.y),
+  };
+
+  const ids = [];
+
+  for (const layerId of layersIds) {
+    const layer = layers.get(layerId);
+
+    if (layer == null) {
+      continue;
+    }
+
+    const { x, y, height, width } = layer;
+
+    if (
+      rect.x + rect.width > x &&
+      rect.x < x + width &&
+      rect.y + rect.height > y &&
+      rect.y < y + height
+    ) {
+      ids.push(layerId);
+    }
+  }
+
+  return ids;
 }
